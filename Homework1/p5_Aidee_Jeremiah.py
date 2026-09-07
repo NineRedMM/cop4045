@@ -1,91 +1,135 @@
-"""Interactive Caesar cipher and letter-frequency analyzer."""
+"""Interactive Caesar cipher program.
 
-
-LOWERCASE_ALPHABET = "abcdefghijklmnopqrstuvwxyz"
-UPPERCASE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+This program encrypts and decrypts text using a Caesar cipher.
+It also counts the frequency of letters in a message.
+"""
 
 
 def caesar_cipher(text, shift):
-    """Returns text encrypted with a Caesar shift."""
-    encrypted_characters = []
-    shift = shift % len(LOWERCASE_ALPHABET)
+    """Encrypts text using a Caesar cipher.
+
+    Args:
+        text: The string to encrypt.
+        shift: The number of positions to shift each letter.
+
+    Returns:
+        The encrypted string.
+    """
+    lowercase = 'abcdefghijklmnopqrstuvwxyz'
+    uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    encrypted_text = ''
+
+    shift = shift % 26
 
     for character in text:
-        if character in LOWERCASE_ALPHABET:
-            old_index = LOWERCASE_ALPHABET.index(character)
-            new_index = (
-                old_index + shift
-            ) % len(LOWERCASE_ALPHABET)
-            encrypted_characters.append(LOWERCASE_ALPHABET[new_index])
-
-        elif character in UPPERCASE_ALPHABET:
-            old_index = UPPERCASE_ALPHABET.index(character)
-            new_index = (
-                old_index + shift
-            ) % len(UPPERCASE_ALPHABET)
-            encrypted_characters.append(UPPERCASE_ALPHABET[new_index])
-
+        if character in lowercase:
+            index = lowercase.index(character)
+            new_index = (index + shift) % 26
+            encrypted_text += lowercase[new_index]
+        elif character in uppercase:
+            index = uppercase.index(character)
+            new_index = (index + shift) % 26
+            encrypted_text += uppercase[new_index]
         else:
-            encrypted_characters.append(character)
+            encrypted_text += character
 
-    return "".join(encrypted_characters)
+    return encrypted_text
 
 
-def caesar_decipher(cyphertext, shift):
-    """Returns the original text by reversing a Caesar shift."""
-    return caesar_cipher(cyphertext, -shift)
+def caesar_decipher(ciphertext, shift):
+    """Decrypts text that was encrypted with a Caesar cipher.
+
+    Args:
+        ciphertext: The encrypted string.
+        shift: The number of positions used during encryption.
+
+    Returns:
+        The original decrypted string.
+    """
+    return caesar_cipher(ciphertext, -shift)
 
 
 def letter_frequency(text):
-    """Counts letters while ignoring case and non-alphabetic characters."""
-    frequency = {}
+    """Counts how many times each letter appears in text.
 
-    for letter in LOWERCASE_ALPHABET:
-        frequency[letter] = 0
+    The function ignores capitalization and non-alphabetic characters.
+
+    Args:
+        text: The string whose letters will be counted.
+
+    Returns:
+        A dictionary containing the frequency of each letter.
+    """
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    frequencies = {}
+
+    for letter in alphabet:
+        frequencies[letter] = 0
 
     for character in text.lower():
-        if character in LOWERCASE_ALPHABET:
-            frequency[character] += 1
+        if character in alphabet:
+            frequencies[character] += 1
 
-    return frequency
+    return frequencies
 
 
-def _print_frequency(frequency):
-    """Prints letter frequencies in alphabetical order."""
-    print("Letter frequencies:")
+def display_frequency(frequencies):
+    """Displays a letter frequency dictionary.
 
-    for letter in LOWERCASE_ALPHABET:
-        print("{}: {}".format(letter, frequency[letter]))
+    Args:
+        frequencies: A dictionary containing letter frequencies.
+    """
+    print('\nLetter Frequency:')
+    for letter in frequencies:
+        print(f'{letter}: {frequencies[letter]}')
 
 
 def main():
     """Runs the interactive Caesar cipher menu."""
     while True:
-        print("\nCaesar Cipher Menu")
-        print("1. Encrypt, analyze, and decrypt a message")
-        print("2. Quit")
+        print('\nCaesar Cipher Menu')
+        print('1. Encrypt and analyze a message')
+        print('2. Decrypt a message')
+        print('3. Exit')
 
-        choice = input("Enter your choice: ")
+        choice = input('Enter your choice: ')
 
-        if choice == "1":
-            message = input("Enter a message: ")
-            shift = int(input("Enter shift value: "))
+        if choice == '1':
+            message = input('Enter a message: ')
 
-            cyphertext = caesar_cipher(message, shift)
-            frequency = letter_frequency(cyphertext)
-            clear_text = caesar_decipher(cyphertext, shift)
+            try:
+                shift = int(input('Enter a shift value: '))
+            except ValueError:
+                print('Shift value must be an integer.')
+                continue
 
-            print("Ciphered text: {}".format(cyphertext))
-            _print_frequency(frequency)
-            print("Deciphered text: {}".format(clear_text))
+            ciphertext = caesar_cipher(message, shift)
+            deciphered_text = caesar_decipher(ciphertext, shift)
+            frequencies = letter_frequency(message)
 
-        elif choice == "2":
-            print("Goodbye.")
+            print(f'\nCiphered text: {ciphertext}')
+            display_frequency(frequencies)
+            print(f'\nDeciphered text: {deciphered_text}')
+
+        elif choice == '2':
+            ciphertext = input('Enter the ciphered message: ')
+
+            try:
+                shift = int(input('Enter the shift value: '))
+            except ValueError:
+                print('Shift value must be an integer.')
+                continue
+
+            deciphered_text = caesar_decipher(ciphertext, shift)
+            print(f'Deciphered text: {deciphered_text}')
+
+        elif choice == '3':
+            print('Goodbye!')
             break
 
         else:
-            print("Invalid choice. Enter 1 or 2.")
+            print('Invalid choice. Please enter 1, 2, or 3.')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
